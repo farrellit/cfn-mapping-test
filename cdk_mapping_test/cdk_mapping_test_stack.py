@@ -3,6 +3,7 @@ from aws_cdk import (
     CfnOutput,
     Fn,
     Stack,
+    Token,
     aws_apigatewayv2_authorizers
 )
 from constructs import Construct
@@ -24,7 +25,7 @@ class CdkMappingTestStack(Stack):
             authorizer_name="JWT-Authorizer",
             identity_source=["$request.header.Authorization"],
             #jwt_audience=["value1", "value2"], # synth works
-            jwt_audience=mapping.find_in_map(Fn.ref("AWS::Region"), "values"), # synth does not work
+            jwt_audience=Token.as_list(mapping.find_in_map(Fn.ref("AWS::Region"), "values")), # synth does not work
         )
         # fails: "Template format error: The Value field of every Outputs member must evaluate to a String and not a List."
         #CfnOutput(
